@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Reborn. — Digital Resources</title>
+<style>
+:root {
+  --bg:#f7f7f3;
+  --card:#fff;
+  --text:#171717;
+  --muted:#777;
+  --line:#e8e8e1;
+  --accent:#c8f36b;
+}
+@media(prefers-color-scheme:dark){
+ :root {
+  --bg:#11120f;--card:#1c1d19;
+  --text:#f5f5ef;--muted:#aaa;
+  --line:#34352e;
+ }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+header,main,footer{
+ max-width:1120px;margin:auto;padding-left:25px;padding-right:25px;
+}
+nav{
+ display:flex;justify-content:space-between;align-items:center;
+ padding-top:28px;
+}
+.logo{font-size:27px;font-weight:800;letter-spacing:-1.5px}
+nav a{color:var(--text);text-decoration:none;font-size:13px}
+.hero{padding:115px 0 100px;max-width:760px}
+.eyebrow{
+ font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)
+}
+h1{
+ font-size:clamp(55px,10vw,100px);line-height:.96;
+ letter-spacing:-6px;margin:25px 0;
+}
+h1 span{color:#929a7c}
+.intro{
+ max-width:530px;color:var(--muted);
+ font-size:17px;line-height:1.8;
+}
+.button{
+ display:inline-block;margin-top:25px;padding:15px 23px;
+ background:var(--text);color:var(--bg);
+ text-decoration:none;border-radius:4px;font-size:13px;font-weight:650;
+}
+.section-head{
+ display:flex;justify-content:space-between;
+ align-items:center;margin:20px 0 30px;
+}
+h2{font-size:32px;letter-spacing:-1.5px;margin:0}
+.count{font-size:12px;color:var(--muted)}
+.grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;
+}
+.card{
+ display:block;background:var(--card);border:1px solid var(--line);
+ border-radius:9px;overflow:hidden;color:var(--text);
+ text-decoration:none;transition:transform .2s;
+}
+.card:hover{transform:translateY(-4px)}
+.card img{
+ display:block;width:100%;aspect-ratio:1.2;
+ object-fit:cover;background:var(--line);
+}
+.details{padding:19px}
+.details h3{font-size:16px;line-height:1.5;margin:0 0 12px}
+.price{font-size:14px;font-weight:750}
+.description{
+ color:var(--muted);font-size:12px;line-height:1.7;margin-top:10px;
+}
+.empty{
+ border:1px dashed var(--line);border-radius:8px;
+ padding:35px;color:var(--muted);line-height:1.7;
+}
+.about{
+ margin:110px 0 80px;padding:45px;
+ background:var(--card);border:1px solid var(--line);border-radius:10px;
+}
+.about h2{margin-top:18px}
+.about p{
+ max-width:650px;color:var(--muted);line-height:1.9;
+}
+footer{
+ border-top:1px solid var(--line);padding-top:25px;
+ padding-bottom:35px;display:flex;justify-content:space-between;
+ color:var(--muted);font-size:12px;
+}
+@media(max-width:700px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+ .hero{padding:85px 0 70px}
+ h1{letter-spacing:-3px}
+ .about{margin:75px 0 55px;padding:25px}
+}
+@media(max-width:430px){
+ .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+<nav>
+ <div class="logo">Reborn.</div>
+ <a href="#products">Explore resources ↗</a>
+</nav>
+
+<section class="hero">
+ <div class="eyebrow">Thoughtfully made digital resources</div>
+ <h1>Make space<br>for <span>better.</span></h1>
+ <p class="intro">
+ Practical digital resources, useful guides and thoughtfully
+ designed journals to make learning and everyday life easier.
+ </p>
+ <a class="button" href="#products">Explore the collection ↘</a>
+</section>
+</header>
+
+<main>
+<section id="products">
+ <div class="section-head">
+  <h2>The collection.</h2>
+  <span class="count" id="count">Loading...</span>
+ </div>
+ <div class="grid" id="product-grid"></div>
+ <p class="count" id="catalogue-note"></p>
+</section>
+
+<section class="about">
+ <div class="eyebrow">A little about us</div>
+ <h2>Useful by design.</h2>
+ <p>
+ Reborn is a growing collection of digital products made with
+ a simple purpose: creating resources that are practical,
+ thoughtful and genuinely useful.
+ </p>
+</section>
+</main>
+
+<footer>
+ <span>© 2026 Reborn.</span>
+ <span>Reborn to be useful.</span>
+</footer>
+
+<script>
+(function(){
+ const grid=document.getElementById('product-grid');
+ const count=document.getElementById('count');
+ const note=document.getElementById('catalogue-note');
+
+ function escapeHTML(value){
+  return String(value??'').replace(/[&<>"']/g,function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+ }
+
+ function render(){
+  const element=document.getElementById('gumroad-data');
+
+  if(!element){
+   count.textContent='Catalogue unavailable';
+   grid.innerHTML='<div class="empty">The live catalogue is available when this page is served through Gumroad.</div>';
+   return;
+  }
+
+  let data;
+  try{
+   data=JSON.parse(element.textContent);
+  }catch(error){
+   count.textContent='Catalogue unavailable';
+   grid.innerHTML='<div class="empty">Unable to read the product catalogue.</div>';
+   return;
+  }
+
+  const products=Array.isArray(data.products)?data.products:[];
+  const total=Number(data.products_total??products.length);
+
+  count.textContent=total+' '+(total===1?'resource':'resources');
+
+  if(!products.length){
+   grid.innerHTML='<div class="empty">New resources are on the way. Check back soon.</div>';
+   return;
+  }
+
+  grid.innerHTML=products.map(function(p){
+   const name=p.name||'Digital resource';
+   const permalink=p.permalink||'';
+   const url=p.url||(permalink?'https://rahulkodiyatar.gumroad.com/l/'+encodeURIComponent(permalink):'https://rahulkodiyatar.gumroad.com');
+   const image=p.thumbnail_url||p.preview_url||p.cover_url||'';
+   const description=p.description||'Thoughtfully created digital resource.';
+   const price=p.price_formatted||p.price||'';
+
+   return `
+    <a class="card" href="${escapeHTML(url)}">
+     ${image?`<img src="${escapeHTML(image)}" alt="${escapeHTML(name)}" loading="lazy">`:'<div class="card-image"></div>'}
+     <div class="details">
+      <h3>${escapeHTML(name)}</h3>
+      <span class="price">${escapeHTML(price)}</span>
+      <p class="description">${escapeHTML(description)}</p>
+     </div>
+    </a>
+   `;
+  }).join('');
+
+  if(total>products.length){
+   note.textContent='Showing '+products.length+' of '+total+' resources.';
+  }
+ }
+
+ render();
+})();
+</script>
+</body>
+</html>
